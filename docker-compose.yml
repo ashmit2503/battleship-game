@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: battleship-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=battleship_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - battleship-network
+    restart: unless-stopped
+    command: mongod --noauth --bind_ip_all
+
+  cpp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9002:9002"
+    networks:
+      - battleship-network
+    restart: unless-stopped
+
+  django-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - WEBSOCKET_HOST=cpp-server
+      - WEBSOCKET_PORT=9002
+      - MONGO_URI=mongodb://mongodb:27017
+      - MONGO_DB_NAME=battleship_db
+    depends_on:
+      - cpp-server
+      - mongodb
+    networks:
+      - battleship-network
+    restart: unless-stopped
+
+networks:
+  battleship-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

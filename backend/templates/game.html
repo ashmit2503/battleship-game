@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship Game | Battle</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .boards-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        
+        .board-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .board-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 40px);
+            grid-template-rows: repeat(10, 40px);
+            gap: 1px;
+            background-color: #333;
+            border: 2px solid #3498db;
+        }
+        
+        .cell {
+            width: 40px;
+            height: 40px;
+            background-color: #cce;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        #opponent-board .cell {
+            background-color: #ddd;
+        }
+        
+        .cell:hover {
+            background-color: rgba(52, 152, 219, 0.3);
+        }
+        
+        .cell.occupied {
+            background-color: #555;
+        }
+        
+        .cell.hit {
+            background-color: #e74c3c;
+            animation: flash 1s;
+        }
+        
+        .cell.miss {
+            background-color: #95a5a6;
+        }
+        
+        /* new visual cues */
+        #opponent-board .cell.hit {
+            background-color: #2ecc71; /* green hits on enemy */
+        }
+        #opponent-board .cell.miss {
+            background-color: #95a5a6; /* grey misses */
+        }
+        #player-board .cell.hit {
+            background-color: #e74c3c; /* red for your ships being hit */
+        }
+        #player-board .cell.miss {
+            background-color: #f39c12; /* orange for enemy misses on your board */
+        }
+        .cell.attacked {
+            pointer-events: none;
+            opacity: 0.7;
+            cursor: default;
+        }
+        
+        .ships-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+        
+        .ship-selection {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .ship {
+            display: flex;
+            cursor: move;
+            margin: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .ship-segment {
+            width: 38px;
+            height: 38px;
+            background-color: #555;
+            border: 1px solid #777;
+        }
+        
+        .ship.vertical {
+            flex-direction: column;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 20px;
+        }
+        
+        .game-status {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 60px;
+        }
+        
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1><i class="fas fa-ship"></i> Battleship - Battle Mode</h1>
+            <p>Game Code: <span id="game-code">{{ lobby_code }}</span> | Opponent: <span id="opponent-name">Waiting...</span></p>
+        </header>
+        
+        <div class="game-status" id="game-status">
+            Place your ships on the board. Double-click ships to rotate.
+        </div>
+        
+        <div class="boards-container">
+            <div class="board-wrapper">
+                <div class="board-title">Your Fleet</div>
+                <div id="player-board" class="board"></div>
+            </div>
+            
+            <div class="board-wrapper">
+                <div class="board-title">Opponent's Waters</div>
+                <div id="opponent-board" class="board"></div>
+            </div>
+        </div>
+        
+        <div class="ships-container">
+            <h3>Place Your Ships</h3>
+            <p>Double-click to rotate before dragging.</p>
+            <div class="ship-selection" id="ship-container">
+                <div class="ship" draggable="true" id="ship5" data-length="5">
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                </div>
+                <div class="ship" draggable="true" id="ship4" data-length="4">
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                </div>
+                <div class="ship" draggable="true" id="ship3a" data-length="3">
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                </div>
+                <div class="ship" draggable="true" id="ship3b" data-length="3">
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                </div>
+                <div class="ship" draggable="true" id="ship2" data-length="2">
+                    <div class="ship-segment"></div>
+                    <div class="ship-segment"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="reset-board-btn" class="btn btn-warning">
+                <i class="fas fa-redo"></i> Reset Board
+            </button>
+            <button id="ready-btn" class="btn btn-success" disabled>
+                <i class="fas fa-check"></i> Ready to Battle
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        const LOBBY_CODE = "{{ lobby_code }}";
+        const USER_ID = "{{ request.user.id }}";
+        const USERNAME = "{{ request.user.username }}";
+        const BOARD_SIZE = 10;
+        let isMyTurn = false;
+        let gameStarted = false;
+        let placedShips = 0;
+        let shipPositions = {};
+        
+        // Game elements
+        const playerBoard = document.getElementById('player-board');
+        const opponentBoard = document.getElementById('opponent-board');
+        const gameStatus = document.getElementById('game-status');
+        const readyBtn = document.getElementById('ready-btn');
+        const resetBtn = document.getElementById('reset-board-btn');
+        
+        // Create game boards
+        function createBoards() {
+            // Create player board
+            for (let i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.dataset.x = i % BOARD_SIZE;
+                cell.dataset.y = Math.floor(i / BOARD_SIZE);
+                playerBoard.appendChild(cell);
+            }
+            
+            // Create opponent board
+            for (let i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.dataset.x = i % BOARD_SIZE;
+                cell.dataset.y = Math.floor(i / BOARD_SIZE);
+                opponentBoard.appendChild(cell);
+            }
+        }
+        
+        // Ship drag and drop functionality
+        function setupDragAndDrop() {
+            const ships = document.querySelectorAll('.ship');
+            
+            ships.forEach(ship => {
+                // Double click to rotate
+                ship.addEventListener('dblclick', () => {
+                    ship.classList.toggle('vertical');
+                });
+                
+                // Drag start
+                ship.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', e.target.id);
+                });
+            });
+            
+            // Add drop functionality to player board cells
+            const cells = playerBoard.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // Allow drop
+                });
+                
+                cell.addEventListener('drop', dropShip);
+            });
+        }
+        
+        function dropShip(e) {
+            e.preventDefault();
+            const shipId = e.dataTransfer.getData('text/plain');
+            const ship = document.getElementById(shipId);
+            const shipLength = parseInt(ship.dataset.length);
+            const cellIndex = parseInt(e.target.dataset.index);
+            const x = parseInt(e.target.dataset.x);
+            const y = parseInt(e.target.dataset.y);
+            const isVertical = ship.classList.contains('vertical');
+            
+            // Determine ship positions
+            let positions = [];
+            
+            for (let i = 0; i < shipLength; i++) {
+                let posX = x;
+                let posY = y;
+                
+                if (isVertical) {
+                    posY = y + i;
+                } else {
+                    posX = x + i;
+                }
+                
+                // Check bounds
+                if (posX >= BOARD_SIZE || posY >= BOARD_SIZE) {
+                    showMessage("Ship placement is out of bounds!", "error");
+                    return;
+                }
+                
+                const index = posY * BOARD_SIZE + posX;
+                positions.push(index);
+            }
+            
+            // Check for overlap with existing ships
+            const hasOverlap = positions.some(pos => {
+                const cell = playerBoard.querySelector(`[data-index="${pos}"]`);
+                return cell.classList.contains('occupied');
+            });
+            
+            if (hasOverlap) {
+                showMessage("Ships cannot overlap!", "error");
+                return;
+            }
+            
+            // Place the ship
+            positions.forEach(pos => {
+                const cell = playerBoard.querySelector(`[data-index="${pos}"]`);
+                cell.classList.add('occupied', shipId);
+            });
+            
+            // Hide the ship from container and store positions
+            ship.style.display = 'none';
+            shipPositions[shipId] = positions;
+            
+            // Update placed ships counter
+            placedShips++;
+            
+            // Enable ready button if all ships are placed
+            if (placedShips === 5) {
+                readyBtn.disabled = false;
+                showMessage("All ships placed! Click 'Ready to Battle' when you're ready.", "success");
+            }
+        }
+        
+        // Reset board functionality
+        function setupResetButton() {
+            resetBtn.addEventListener('click', () => {
+                // Clear the board
+                const cells = playerBoard.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    cell.classList.remove('occupied');
+                    // Remove all ship classes
+                    for (const shipId in shipPositions) {
+                        cell.classList.remove(shipId);
+                    }
+                });
+                
+                // Show all ships in container
+                document.querySelectorAll('.ship').forEach(ship => {
+                    ship.style.display = 'flex';
+                });
+                
+                // Reset variables
+                placedShips = 0;
+                shipPositions = {};
+                readyBtn.disabled = true;
+                
+                showMessage("Board reset. Place your ships again.", "info");
+            });
+        }
+          // WebSocket setup
+        function setupWebSocket() {
+            // Connect to the C++ WebSocket server
+            const socket = new WebSocket('{{ websocket_url }}');
+              socket.onopen = () => {
+                console.log("Connected to game server");
+                showMessage("Connected to game server", "success");
+                
+                // Send join message to server
+                socket.send(JSON.stringify({
+                    type: "join",
+                    lobby: LOBBY_CODE,
+                    user: USER_ID,
+                    username: USERNAME
+                }));
+            };
+            
+            socket.onmessage = (event) => {
+                const msg = JSON.parse(event.data);
+                handleMessage(msg, socket);
+            };
+            
+            socket.onclose = () => {
+                console.log("Disconnected from server");
+                showMessage("Connection to server lost. Please refresh the page.", "error");
+            };
+            
+            socket.onerror = (error) => {
+                console.error("WebSocket error:", error);
+                showMessage("Connection error. Please refresh the page.", "error");
+            };
+              // Add ready button functionality
+            readyBtn.addEventListener('click', () => {
+                console.log("Sending ready message with board:", shipPositions);
+                
+                // Send ready message with board configuration
+                socket.send(JSON.stringify({
+                    type: "ready",
+                    user: USER_ID,
+                    board: shipPositions
+                }));
+                
+                readyBtn.disabled = true;
+                resetBtn.disabled = true;
+                showMessage("Waiting for opponent to be ready...", "info");
+            });
+            
+            // Set up attack handling
+            opponentBoard.addEventListener('click', (event) => {
+                if (!gameStarted || !isMyTurn) return;
+                
+                const cell = event.target;
+                
+                // Ignore if cell was already attacked
+                if (cell.classList.contains('hit') || cell.classList.contains('miss')) return;
+                
+                const x = parseInt(cell.dataset.x);
+                const y = parseInt(cell.dataset.y);
+                
+                // Send attack message
+                socket.send(JSON.stringify({
+                    type: "attack",
+                    x: x,
+                    y: y
+                }));
+                
+                // Temporarily disable further attacks until server responds
+                isMyTurn = false;
+            });
+            
+            return socket;
+        }
+          // Handle messages from server
+        function handleMessage(msg, socket) {
+            console.log("Received message:", msg);
+            
+            switch(msg.type) {
+                case "joinConfirmed":
+                    showMessage("Successfully joined the game lobby", "success");
+                    break;
+                    
+                case "opponentJoined":
+                    document.getElementById('opponent-name').textContent = msg.username;
+                    showMessage(`${msg.username} has joined the game!`, "success");
+                    break;
+                
+                case "gameStart":
+                    console.log("Game starting! First player:", msg.firstPlayer);
+                    gameStarted = true;
+                    isMyTurn = (msg.firstPlayer === USER_ID);
+                    
+                    // Disable ship container
+                    document.querySelector('.ships-container').style.display = 'none';
+                    
+                    if (isMyTurn) {
+                        showMessage("Game started! Your turn to attack.", "success");
+                    } else {
+                        showMessage("Game started! Waiting for opponent's attack.", "info");
+                    }
+                    break;
+                
+                case "attackResult":
+                    // Show result of our attack on opponent's board
+                    const opponentCell = opponentBoard.querySelector(`[data-x="${msg.x}"][data-y="${msg.y}"]`);
+                    opponentCell.classList.add(msg.hit ? "hit" : "miss");
+                    opponentCell.classList.add("attacked");                // ← disable & fade
+                    if (msg.sunk) {
+                        showMessage(`You sunk the enemy's ship!`, "success");
+                    } else {
+                        showMessage(msg.hit ? "Hit!" : "Miss!", msg.hit ? "success" : "info");
+                    }
+                    isMyTurn = msg.nextPlayer === USER_ID;
+
+                    // NEW: handle immediate game over
+                    if (msg.gameOver) {
+                        if (msg.winner === USER_ID) {
+                            showMessage("You won the battle! All enemy ships are destroyed.", "success");
+                        } else {
+                            showMessage("You lost the battle! All your ships have been sunk.", "error");
+                        }
+                        endGameUI();
+                        return;
+                    }
+
+                    if (isMyTurn) showMessage("Your turn to attack.", "info");
+                    break;
+                
+                case "attacked":
+                    // Show where opponent attacked us
+                    const ourCell = playerBoard.querySelector(`[data-x="${msg.x}"][data-y="${msg.y}"]`);
+                    ourCell.classList.add(msg.hit ? "hit" : "miss");
+                    ourCell.classList.add("attacked");                    // ← disable & fade
+                    if (msg.sunk) {
+                        showMessage(`The enemy sunk your ship!`, "error");
+                    } else {
+                        showMessage(msg.hit ? "Your ship was hit!" : "The enemy missed!", msg.hit ? "error" : "success");
+                    }
+                    isMyTurn = msg.nextPlayer === USER_ID;
+
+                    // NEW: handle immediate game over
+                    if (msg.gameOver) {
+                        if (msg.winner === USER_ID) {
+                            showMessage("You won the battle! All enemy ships are destroyed.", "success");
+                        } else {
+                            showMessage("You lost the battle! All your ships have been sunk.", "error");
+                        }
+                        endGameUI();
+                        return;
+                    }
+
+                    showMessage(isMyTurn ? "Your turn to attack." : "Waiting for opponent's attack.", "info");
+                    break;
+                
+                case "yourTurn":
+                    isMyTurn = true;
+                    showMessage("Your turn to attack.", "info");
+                    break;
+                
+                case "gameOver":
+                    gameStarted = false;
+                    if (msg.winner === USER_ID) {
+                        showMessage("You won the battle! All enemy ships are destroyed.", "success");
+                    } else {
+                        showMessage("You lost the battle! All your ships have been sunk.", "error");
+                    }
+                    
+                    // Add a return to dashboard button
+                    const returnBtn = document.createElement('button');
+                    returnBtn.classList.add('btn');
+                    returnBtn.innerHTML = '<i class="fas fa-home"></i> Return to Dashboard';
+                    returnBtn.addEventListener('click', () => {
+                        window.location.href = '/api/dashboard/';
+                    });
+                    
+                    document.querySelector('.controls').innerHTML = '';
+                    document.querySelector('.controls').appendChild(returnBtn);
+                    break;
+                
+                default:
+                    console.log("Unknown message type:", msg.type);
+            }
+        }
+        
+        // NEW helper to show return button
+        function endGameUI() {
+            const returnBtn = document.createElement('button');
+            returnBtn.classList.add('btn');
+            returnBtn.innerHTML = '<i class="fas fa-home"></i> Return to Dashboard';
+            returnBtn.addEventListener('click', () => {
+                window.location.href = '/api/dashboard/';
+            });
+            document.querySelector('.controls').innerHTML = '';
+            document.querySelector('.controls').appendChild(returnBtn);
+        }
+        
+        // Helper function to display messages
+        function showMessage(message, type) {
+            gameStatus.textContent = message;
+            gameStatus.className = 'game-status';
+            gameStatus.classList.add(type);
+        }
+        
+        // Initialize the game
+        function initGame() {
+            createBoards();
+            setupDragAndDrop();
+            setupResetButton();
+            const socket = setupWebSocket();
+        }
+        
+        // Start the game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
+</body>
+</html>

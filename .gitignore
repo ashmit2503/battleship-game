@@ -1,0 +1,31 @@
+# Docker
+.dockerignore
+
+# Build directories
+build/
+dist/
+*.egg-info/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.sqlite3
+
+# C++ build artifacts
+*.o
+*.obj
+*.exe
+*.out
+*.app
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo

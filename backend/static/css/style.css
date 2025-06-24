@@ -1,0 +1,459 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* Tabs */
+.tabs {
+    margin-bottom: 20px;
+}
+
+.tab-header {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-btn:hover {
+    background-color: #f5f5f5;
+}
+
+.tab-btn.active {
+    border-bottom: 2px solid #3498db;
+    color: #3498db;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border 0.3s;
+    font-size: 16px;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s;
+    font-weight: 600;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+/* Messages */
+.success {
+    color: #2ecc71;
+    padding: 10px;
+    text-align: center;
+    margin-top: 15px;
+    background-color: rgba(46, 204, 113, 0.1);
+    border-radius: 4px;
+}
+
+.error {
+    color: #e74c3c;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: rgba(231, 76, 60, 0.1);
+    border-radius: 4px;
+}
+
+/* Dashboard Layout */
+.game-dashboard {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    background-color: #1a2a3a;
+    color: #f5f5f5;
+}
+
+.dashboard-header {
+    background-color: #0d1b2a;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-content {
+    padding: 30px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.dashboard-footer {
+    background-color: #0d1b2a;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9em;
+}
+
+.welcome-section {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Game Cards and Grid Layout */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.option-card {
+    background-color: #2c3e50;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #3a506b;
+}
+
+.option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.option-card h3 {
+    font-size: 1.5rem;
+    margin-top: 0;
+    color: #3498db;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Lobby Details */
+.lobby-details {
+    background-color: #233446;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    border-left: 4px solid #3498db;
+}
+
+.player-list {
+    margin-top: 15px;
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #1a2a3a;
+    border-radius: 4px;
+}
+
+.player-status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.status-host {
+    background-color: #e74c3c;
+}
+
+.status-joined {
+    background-color: #2ecc71;
+}
+
+.status-waiting {
+    background-color: #f39c12;
+}
+
+/* Lobby Code Display */
+.highlight-code {
+    background-color: #f1c40f;
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 4px;
+    letter-spacing: 3px;
+    display: inline-block;
+    margin: 10px 0;
+    text-align: center;
+}
+
+/* Improved Buttons */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: linear-gradient(to right, #3498db, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    width: auto;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn:hover {
+    background: linear-gradient(to right, #2980b9, #3498db);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-success {
+    background: linear-gradient(to right, #2ecc71, #27ae60);
+}
+
+.btn-success:hover {
+    background: linear-gradient(to right, #27ae60, #2ecc71);
+}
+
+.btn-warning {
+    background: linear-gradient(to right, #f39c12, #e67e22);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(to right, #e67e22, #f39c12);
+}
+
+.btn-danger {
+    background: linear-gradient(to right, #e74c3c, #c0392b);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(to right, #c0392b, #e74c3c);
+}
+
+.logout-btn {
+    background-color: transparent;
+    color: #e74c3c;
+    border: 2px solid #e74c3c;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.logout-btn:hover {
+    background-color: #e74c3c;
+    color: white;
+    text-decoration: none;
+}
+
+/* Message Display */
+#message {
+    margin: 20px 0;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+
+.flex-space-between {
+    justify-content: space-between;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+/* Game Interface Styles */
+.game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #1a2a3a;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    color: #f5f5f5;
+}
+
+.game-container header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #0d1b2a;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.game-container h1 {
+    margin: 0;
+}
+
+.game-status {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.game-status.success {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+}
+
+.game-status.error {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+
+.game-status.info {
+    background-color: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+}
+
+/* Styles for game boards and ships */
+.game-boards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+/* Game Rules Styling */
+.rules-section {
+    margin-top: 15px;
+}
+
+.rules-section h4 {
+    color: #3498db;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #3a506b;
+    padding-bottom: 5px;
+}
+
+.rules-section ul {
+    margin-left: 20px;
+    color: #ecf0f1;
+}
+
+.rules-section li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.rules-section li strong {
+    color: #f39c12;
+}
+
+.rules-section .fas {
+    margin-right: 8px;
+    color: #3498db;
+}

@@ -33,7 +33,7 @@ This project uses a multi-service architecture:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/ashmit2503/battleship-game.git
    cd battleship-game
    ```
 

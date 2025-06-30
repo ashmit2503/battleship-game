@@ -1,17 +1,21 @@
 FROM python:3.11
 
-# Set working directory
 WORKDIR /app
 
-# Copy requirements and install dependencies
+# Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Copy source
 COPY . /app
 
-# Expose port
-EXPOSE 8000
+# Tell Django where to find settings
+ENV DJANGO_SETTINGS_MODULE=backend.settings
+# (if your module is named differently, adjust accordingly)
 
-# Run Django development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Collect all static files into /app/staticfiles
+RUN python manage.py collectstatic --noinput
+
+# Expose and run with Gunicorn (or you can stick with runserver if you really want)
+EXPOSE 8000
+CMD ["gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
